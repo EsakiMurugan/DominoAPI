@@ -6,6 +6,7 @@ using FluentAssertions;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,21 +16,16 @@ using System.Threading.Tasks;
 
 namespace DominoTests.Controller
 {
-    public class CredentialControllerTests
+    public class CredentialControllerTests 
     {
         private readonly IConfiguration _configuration;
-        public CredentialControllerTests(IConfiguration configuration)
-        {
-            _configuration = configuration;
-        }
-        
         [Fact]
         public async Task CustomerRegn()
         {
             //Arrange
             var InMemory = new DominoInMemory();
             var dbContext = await InMemory.GetDatabaseContext();
-            var credentialController = new CredentialController(dbContext,_configuration);
+            var credentialController = new CredentialController(dbContext, _configuration);
             Customer customer = new Customer()
             {
                 CustomerID = 205,
@@ -46,7 +42,7 @@ namespace DominoTests.Controller
             result.Value.Should().NotBeNull();
             dbContext.customers.Should().HaveCount(5);
         }
-        [Fact]
+        //[Fact]
         public async Task AdminLogin()
         {
             //Arrange
@@ -66,23 +62,19 @@ namespace DominoTests.Controller
             result.Value.Should().NotBeNull();
             dbContext.admin.Should().HaveCount(1);
         }
-
-
-
         [Fact]
         public async Task CustomerLogin()
         {
             //Arrange
             var InMemory = new DominoInMemory();
             var dbContext = await InMemory.GetDatabaseContext();
-            var CredentialControllerTests = 
-            
-            
+            var _configuration = new ConfigurationBuilder()
+            .SetBasePath(Directory.GetCurrentDirectory())
+            .AddJsonFile("appsettings.json")
+            .Build();
             var credentialController = new CredentialController(dbContext, _configuration);
             Customer customer = new Customer()
             {
-                //AdminID = 52,
-                //AdminName = "ShopManager",
                 EmailID = "esakimurugan1997@gmail.com2",
                 Password = "@Abcde123"
             };
@@ -90,12 +82,6 @@ namespace DominoTests.Controller
             var result = await credentialController.CustomerLogin(customer);
             //Assert
             result.Value.Should().NotBeNull();
-            dbContext.admin.Should().HaveCount(1);
-        }
-        //[Fact]
-        public async Task GetToken()
-        {
-
         }
     }
 }
