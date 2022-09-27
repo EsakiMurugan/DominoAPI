@@ -22,7 +22,7 @@ namespace Domino.Controllers
         {
             this.db = db;
             _configuration = configuration;
-        }   
+        }
         [HttpPost]
         [Route("CustomerRegn")]
         public async Task<ActionResult<Customer>> CustomerRegn(Customer? c)
@@ -31,7 +31,7 @@ namespace Domino.Controllers
             c.Password = PasswordHash;
             await db.customers.AddAsync(c);
             await db.SaveChangesAsync();
-            return Ok(c);
+            return c;
         }
         [HttpPost]
         [Route("CustomerLogin")]
@@ -76,8 +76,8 @@ namespace Domino.Controllers
         {
             var authSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JWT:Secret"]));
             var token = new JwtSecurityToken(
-                 issuer: _configuration["JWT:ValidIssuer"],
-                 audience: _configuration["JWT:ValidAudience"],
+                 issuer: _configuration["JWT:ValidIssuer"], //"https://localhost:7200"
+                 audience: _configuration["JWT:ValidAudience"], //"User"
                  expires: DateTime.Now.AddMinutes(5),
                  claims: authClaims,
                  signingCredentials: new SigningCredentials(authSigningKey, SecurityAlgorithms.HmacSha256)

@@ -19,7 +19,7 @@ namespace Domino.Controllers
         }
         [HttpPost]
         [Route("Payment")]
-        //Cart Items are purchased and proceed to payment
+        //Cart Items are purchased and proceed to payment & Stock Reduction in Pizza Entity
         public async Task<ActionResult<Payment>> Payment(Payment payment)
         {
             Customer? customer = await (from i in _context.customers
@@ -39,14 +39,13 @@ namespace Domino.Controllers
             }
             _context.payments.Add(payment);
             await _context.SaveChangesAsync();
-            return Ok();
+            return payment;
         }
         [HttpGet]
         [Route("GetPaymentById")]
         //Payment by Customer ID
         public async Task<ActionResult<List<Payment>>> GetPaymentById(int id)
         {
-
             var result = await (from i in _context.payments
                                 where i.CustomerID == id
                                 select i).ToListAsync();
@@ -79,9 +78,9 @@ namespace Domino.Controllers
                 _context.Add(receipt);
                 await _context.SaveChangesAsync();
             }
-            return Ok(); 
+            return Ok();
         }
-        [HttpGet,Authorize]
+        [HttpGet]
         [Route("GetMyOrders")]
         //Get Order by Customer ID
         public async Task<ActionResult<List<Receipt>>> GetMyOrders(int id)
@@ -89,7 +88,7 @@ namespace Domino.Controllers
             var History = await (from i in _context.receipts.Include(X => X.pizza)
                                  where i.CustomerID == id
                                  select i).ToListAsync();
-            return Ok(History);
+            return History;
         }
 
 

@@ -52,9 +52,10 @@ namespace Domino.Controllers
         {
             try
             {
-                await db.pizza.AddAsync(p);
-                await db.SaveChangesAsync();
-                return CreatedAtAction("GetAllPizza",p);
+                 await db.pizza.AddAsync(p);
+                 await db.SaveChangesAsync();
+                 return p;
+                
             }
             catch (Exception)
             {
@@ -90,7 +91,7 @@ namespace Domino.Controllers
                 }
                 db.pizza.Remove(p);
                 await db.SaveChangesAsync();
-                return CreatedAtAction("GetAllPizza", p);
+                return null;
             }
             catch (Exception)
             {

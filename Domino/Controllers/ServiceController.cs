@@ -30,8 +30,8 @@ namespace Domino.Controllers
         //Get Cart by Cart ID
         public async Task<Cart> GetCartById(int id)
         {
-            var c = await _context.cart.Include(x => x.pizza).Where(x => x.CartID == id).Select(x => x).FirstOrDefaultAsync();
-            return c;
+                var c = await _context.cart.Include(x => x.pizza).Where(x => x.CartID == id).Select(x => x).FirstOrDefaultAsync();
+                return c;
         }
         
         [HttpGet("{id}")]
@@ -48,14 +48,14 @@ namespace Domino.Controllers
         }
         [HttpPut("{id}")]
         //Edit quantity option for already added item in cart
-        public async Task<ActionResult> PutCart(Cart cart)
+        public async Task<ActionResult<Cart>> PutCart(Cart cart)
         {
             var c = await _context.cart.FindAsync(cart.CartID);
             c.Quantity = cart.Quantity;
             c.UnitPrice = c.Quantity*(from i in _context.pizza where i.PizzaID == c.PizzaID select i.Price).SingleOrDefault();
             _context.cart.Update(c);
             await _context.SaveChangesAsync();
-            return Ok(c);
+            return c;
         }
         // DELETE: api/Carts/5
         [HttpDelete("{id}")]
@@ -65,7 +65,7 @@ namespace Domino.Controllers
             var c = await _context.cart.Include(x => x.pizza).Where(x => x.CartID == id).Select(x => x).FirstOrDefaultAsync();
             _context.cart.Remove(c);
             await _context.SaveChangesAsync();
-            return Ok(c);
+            return null;
         }
         private bool CartExists(int id)
         {
@@ -107,7 +107,7 @@ namespace Domino.Controllers
             }
             _context.cart.Add(cart);
             await _context.SaveChangesAsync();
-            return CreatedAtAction("GetCart", new { id = cart.CartID }, cart);
+            return cart;
         }
        
         [HttpPut]
@@ -118,7 +118,7 @@ namespace Domino.Controllers
             update.CartTypeID = null;
             _context.customers.Update(update);
             await _context.SaveChangesAsync();  
-            return null;
+            return update;
         }
     }
 }
